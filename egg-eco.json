@@ -1,0 +1,26 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v1"
+    },
+    "exported_at": "2018-03-11T22:53:44+01:00",
+    "name": "Eco",
+    "author": "mail@arnst.cc",
+    "description": "The Eco Game",
+    "image": "docker.io\/darnst\/mono:latest",
+    "startup": "mono EcoServer.exe -nogui",
+    "config": {
+        "files": "{\r\n    \"Configs\/Network.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"GameServerPort\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"Server Initialization finished in\",\r\n    \"userInteraction\": []\r\n}",
+        "logs": "{\r\n    \"custom\": true,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Eco Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl unzip\r\n\r\ncd \/tmp\r\n\r\ncurl -sSL https:\/\/s3-us-west-2.amazonaws.com\/eco-releases\/EcoServer_v0.7.0.0-beta-staging-7da08558.zip -o eco.zip\r\n\r\nunzip -o eco.zip -d \/mnt\/server",
+            "container": "alpine:3.4",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": []
+}
