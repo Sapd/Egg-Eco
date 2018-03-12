@@ -3,24 +3,61 @@
     "meta": {
         "version": "PTDL_v1"
     },
-    "exported_at": "2018-03-11T22:53:44+01:00",
+    "exported_at": "2018-03-12T18:05:06+01:00",
     "name": "Eco",
     "author": "mail@arnst.cc",
     "description": "The Eco Game",
     "image": "docker.io\/darnst\/mono:latest",
     "startup": "mono EcoServer.exe -nogui",
     "config": {
-        "files": "{\r\n    \"Configs\/Network.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"GameServerPort\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "files": "{\r\n    \"Configs\/Network.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"GameServerPort\": \"{{server.build.default.port}}\",\r\n            \"WebServerPort\": \"{{server.build.env.WEBSERVER_PORT}}\"\r\n        }\r\n    },\r\n    \"Configs\/WorldGenerator.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"Dimensions.x\": \"{{server.build.env.WORLD_SIZE}}\",\r\n            \"Dimensions.y\": \"{{server.build.env.WORLD_SIZE}}\"\r\n        }\r\n    },\r\n    \"Configs\/Users.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"MaxSlots\": \"{{server.build.env.MAX_SLOTS}}\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"Server Initialization finished in\",\r\n    \"userInteraction\": []\r\n}",
         "logs": "{\r\n    \"custom\": true,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/ash\r\n# Eco Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl unzip\r\n\r\ncd \/tmp\r\n\r\ncurl -sSL https:\/\/s3-us-west-2.amazonaws.com\/eco-releases\/EcoServer_v0.7.0.0-beta-staging-7da08558.zip -o eco.zip\r\n\r\nunzip -o eco.zip -d \/mnt\/server",
+            "script": "#!\/bin\/ash\r\n# Eco Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl unzip\r\n\r\ncd \/tmp\r\n\r\ncurl -sSLO https:\/\/s3-us-west-2.amazonaws.com\/eco-releases\/EcoServer_v${ECO_VERSION}.zip\r\n\r\nunzip -o EcoServer_v${ECO_VERSION}.zip -d \/mnt\/server",
             "container": "alpine:3.4",
             "entrypoint": "ash"
         }
     },
-    "variables": []
+    "variables": [
+        {
+            "name": "Webserver Port",
+            "description": "Port for the webserver. Also used as query.",
+            "env_variable": "WEBSERVER_PORT",
+            "default_value": "",
+            "user_viewable": 1,
+            "user_editable": 0,
+            "rules": "required|numeric|min:1025|max:65535"
+        },
+        {
+            "name": "Maximum Slots",
+            "description": "Total number of slots to allow on the server.",
+            "env_variable": "MAX_SLOTS",
+            "default_value": "-1",
+            "user_viewable": 1,
+            "user_editable": 0,
+            "rules": "required|numeric|digits_between:1,3"
+        },
+        {
+            "name": "Eco Version",
+            "description": "Which version of Eco to install and use.",
+            "env_variable": "ECO_VERSION",
+            "default_value": "0.7.2.3-beta",
+            "user_viewable": 1,
+            "user_editable": 1,
+            "rules": "required|string|max:20"
+        },
+        {
+            "name": "World Size",
+            "description": "This Value sets the x and y dimension of the world. As both must be the same, only one variable is used.\r\nIt must be divisible by 4.",
+            "env_variable": "WORLD_SIZE",
+            "default_value": "72",
+            "user_viewable": 1,
+            "user_editable": 0,
+            "rules": "required|numeric|min:40|max:1600"
+        }
+    ]
 }
