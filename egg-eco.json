@@ -3,11 +3,11 @@
     "meta": {
         "version": "PTDL_v1"
     },
-    "exported_at": "2018-03-12T18:05:06+01:00",
+    "exported_at": "2018-05-28T10:46:44-04:00",
     "name": "Eco",
     "author": "mail@arnst.cc",
     "description": "The Eco Game",
-    "image": "docker.io\/darnst\/mono:latest",
+    "image": "darnst\/mono:latest",
     "startup": "mono EcoServer.exe -nogui",
     "config": {
         "files": "{\r\n    \"Configs\/Network.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"GameServerPort\": \"{{server.build.default.port}}\",\r\n            \"WebServerPort\": \"{{server.build.env.WEBSERVER_PORT}}\"\r\n        }\r\n    },\r\n    \"Configs\/WorldGenerator.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"Dimensions.x\": \"{{server.build.env.WORLD_SIZE}}\",\r\n            \"Dimensions.y\": \"{{server.build.env.WORLD_SIZE}}\"\r\n        }\r\n    },\r\n    \"Configs\/Users.eco\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"MaxSlots\": \"{{server.build.env.MAX_SLOTS}}\"\r\n        }\r\n    }\r\n}",
@@ -17,7 +17,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/ash\r\n# Eco Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl unzip\r\n\r\ncd \/tmp\r\n\r\ncurl -sSLO https:\/\/s3-us-west-2.amazonaws.com\/eco-releases\/EcoServer_v${ECO_VERSION}.zip\r\n\r\nunzip -o EcoServer_v${ECO_VERSION}.zip -d \/mnt\/server",
+            "script": "#!\/bin\/ash\r\n# Eco Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl unzip\r\n\r\ncd \/tmp\r\ncurl -sSLO https:\/\/s3-us-west-2.amazonaws.com\/eco-releases\/EcoServer_v${ECO_VERSION}.zip\r\n\r\nunzip -o EcoServer_v${ECO_VERSION}.zip -d \/mnt\/server",
             "container": "alpine:3.4",
             "entrypoint": "ash"
         }
@@ -27,7 +27,7 @@
             "name": "Webserver Port",
             "description": "Port for the webserver. Also used as query.",
             "env_variable": "WEBSERVER_PORT",
-            "default_value": "",
+            "default_value": "3001",
             "user_viewable": 1,
             "user_editable": 0,
             "rules": "required|numeric|min:1025|max:65535"
@@ -39,13 +39,13 @@
             "default_value": "-1",
             "user_viewable": 1,
             "user_editable": 0,
-            "rules": "required|numeric|digits_between:1,3"
+            "rules": "required|string|max:3"
         },
         {
             "name": "Eco Version",
             "description": "Which version of Eco to install and use.",
             "env_variable": "ECO_VERSION",
-            "default_value": "0.7.2.3-beta",
+            "default_value": "0.7.4.6-beta",
             "user_viewable": 1,
             "user_editable": 1,
             "rules": "required|string|max:20"
